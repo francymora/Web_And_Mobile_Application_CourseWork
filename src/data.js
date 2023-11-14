@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-
+import mongoose from 'mongoose';
 
 const dataSchema = new mongoose.Schema({
   team: String,
@@ -16,4 +15,4 @@ const dataSchema = new mongoose.Schema({
 const RecordModel = mongoose.model('Record', dataSchema);
 
 
-export default RecordModel;
+export { RecordModel };
