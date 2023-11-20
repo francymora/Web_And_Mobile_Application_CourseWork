@@ -1,37 +1,35 @@
-
 import express from 'express';
 import mongoose from 'mongoose';
-import { RecordModel } from './data.js';
+import { FootballModel } from './data.js';
 
 const app = express();
-mongoose.connect('mongodb://localhost:27017/Web_Apllication_Coursework');
+const port = 5002;
 
-const dbConnection = mongoose.connection;
-
-dbConnection.on('error', (error) => console.error('Errore di connessione al database:', error));
-
-// Evento per gestire la connessione riuscita
-dbConnection.once('open', () => console.log('Connessione al database avvenuta con successo'));
-const port = 5002
-
-app.get('/', (req, res) => {
-  res.send('Hello World!')
+// Connessione al database MongoDB
+mongoose.connect('mongodb://localhost:27017/Web_Application_Coursework').then(() => {
+  console.log('Connessione al database MongoDB riuscita');
 })
-
-//const RecordModel = require('./dataschema');
-
-async function retrieveTeams() {
+.catch((error) => {
+  console.error('Errore di connessione al database:', error);
+});
+app.get('/football', async (req, res) => {
   try {
-    const teams = await RecordModel.find({}, 'win');
-    console.log('Nomi delle squadre nel database:', teams);
-    // Puoi fare qualcosa con i nomi delle squadre recuperate qui
+    const allFootballData = await FootballModel.find({}); // Query per ottenere tutti i documenti
+    res.json(allFootballData); // Invia i dati come JSON in risposta alla richiesta GET su /football
   } catch (error) {
-    console.error('Errore durante il recupero dei nomi delle squadre:', error);
+    console.error('Errore nella query:', error);
+    res.status(500).json({ error: 'Errore nel recuperare i dati' }); // Invia un errore HTTP 500 in caso di errore
   }
-}
-
-retrieveTeams();
-
+});
+app.get('/argentina', async (req, res) => {
+  try {
+    const allFootballData = await FootballModel.find({Team: 'Argentina'}); // Query per ottenere tutti i documenti
+    res.json(allFootballData); // Invia i dati come JSON in risposta alla richiesta GET su /football
+  } catch (error) {
+    console.error('Errore nella query:', error);
+    res.status(500).json({ error: 'Errore nel recuperare i dati' }); // Invia un errore HTTP 500 in caso di errore
+  }
+});
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
-})
+});
