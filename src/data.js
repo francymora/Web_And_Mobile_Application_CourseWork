@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import express from 'express';
 const app = express();
-const port = 5004;
+
 
 const footballSchema = new mongoose.Schema({
   Team: String,
