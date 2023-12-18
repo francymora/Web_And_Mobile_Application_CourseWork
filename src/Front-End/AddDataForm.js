@@ -18,6 +18,7 @@ const AddDataForm = () => {
     e.preventDefault();
 
     try {
+      
       const response = await axios.post('/addData', formData);
       console.log('Data added successfully:', response.data);
       // Potresti aggiungere logica per gestire la risposta qui (ad esempio, un messaggio di successo)
