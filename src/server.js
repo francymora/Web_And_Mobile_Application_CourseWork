@@ -2,15 +2,28 @@ import express from 'express';
 import mongoose from 'mongoose';
 import { FootballModel } from './data.js';
 import { DatabaseConnection } from './databaseconection.js';
-
+import cors from 'cors';
 const app = express();
 const port = 3000;
 app.use(express.json());
+app.use(cors())
 
 app.use(express.urlencoded({ extended: true }));
 
 // Connessione al database MongoDB
 DatabaseConnection();
+
+app.get('/allteams', cors() ,async function(req, res) {
+  try {
+    const allTeams = await FootballModel.find().exec();
+    res.json(allTeams);
+  } catch (err) {
+    console.error('Errore durante la ricerca delle squadre:', err);
+    res.status(500).send('Errore durante la ricerca delle squadre');
+  }
+});
+
+
 
 app.post('/addData', async (req, res) => {
   
@@ -41,7 +54,7 @@ app.post('/addData', async (req, res) => {
 
 
 // POST method per l'aggiornamento di un singolo record per un dato Team
-app.post('/updateData', async (req, res) => {
+app.post('/updateData:id', async (req, res) => {
   const { Team, FieldToUpdate, NewValue } = req.body;
 
   try {
@@ -63,7 +76,7 @@ app.post('/updateData', async (req, res) => {
   }
 });
 
-app.post('/deleteData/:teamName', async (req, res) => {
+app.post('/deleteData/:id', async (req, res) => {
   const { teamName } = req.params; // Ottieni il nome del team dai parametri dell'URL
 
   try {
@@ -223,8 +236,8 @@ app.post('/updateData/:teamName', async (req, res) => {
 
 
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+app.listen(3000, () => {
+  console.log(`Example app listening on port ${3000}`)
 });
 
 

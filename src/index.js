@@ -4,13 +4,14 @@ import './index.css';
 import App from './App.js';
 import reportWebVitals from './reportWebVitals.js';
 import AddDataForm from './Front-End/AddDataForm.js';
+import TeamsDisplay from './Front-End/Display.js';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     
-    <AddDataForm />
+    <TeamsDisplay />
   </React.StrictMode>
 );
 

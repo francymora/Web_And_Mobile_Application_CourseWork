@@ -4,12 +4,12 @@ import mongoose from 'mongoose';
 
 const footballSchema = new mongoose.Schema({
   Team: String,
-  GamesPlayed: Number,
+  "Games Played": Number,
   Win: Number,
   Draw: Number,
   Loss: Number,
-  GoalsFor: Number,
-  GoalsAgainst: Number,
+  "Goals For": Number,
+  "Goals Against": Number,
   Points: Number,
   Year: Number
 }, {collection: 'Football'});
