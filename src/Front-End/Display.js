@@ -19,7 +19,7 @@ function TeamsDisplay() {
             console.log("error has occuree")
         })
     },[])
-    return (/*
+    return (
         <div className="container">
           <div className="mt-3">
             <table>
@@ -50,19 +50,16 @@ function TeamsDisplay() {
                     <td>{team["Goals Against"]}</td>
                     <td>{team.Points}</td>
                     <td>{team.Year}</td>
-                    <td>
-                      <Link to={"updateData/" + team._id}>Edit</Link>
-                    </td>
-                    <td>
-                      <Link to={"deleteData/" + team._id}>Delete</Link>
-                    </td>
+                    
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
         </div>
-      */<h1>Test</h1>);
+        
+      
+      );
 }
 
 export default TeamsDisplay;
