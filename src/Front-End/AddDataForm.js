@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const AddDataForm = () => {
-  const [formData, setFormData] = useState({
+function AddDataForm()  {
+  let url = "http://localhost:3000/"
+  const [state, setState] = useState({
     Team: '',
     GamesPlayed: '',
     Win: '',
@@ -11,72 +12,101 @@ const AddDataForm = () => {
     GoalsFor: '',
     GoalsAgainst: '',
     Points: '',
-    Year: ''
+    Year: '2023'
   });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      
-      const response = await axios.post('/addData', formData);
-      console.log('Data added successfully:', response.data);
-      // Potresti aggiungere logica per gestire la risposta qui (ad esempio, un messaggio di successo)
-    } catch (error) {
-      console.error('Error adding data:', error);
-      // Puoi gestire l'errore qui (ad esempio, mostrare un messaggio di errore all'utente)
-    }
-  };
-
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const value = e.target.value;
+    setState({
+      ...state,
+      [e.target.name] : value,
+    });
   };
+
+  const onSubmit=(e) => {
+    e.preventDefaut();
+    const teamdata = {
+      Team:state.Team,
+      "Games Played":state.GamesPlayed,
+      Win:state.Win,
+      Draw:state.Draw,
+      Loss:state.Loss,
+      "Goals For":state.GoalsFor,
+      "Goals Against":state.GoalsAgainst,
+      Points:state.Points,
+      Year:state.Year
+    }
+
+    axios.post(url+"addData",teamdata)
+    .then(res => console.log(res.data));
+  }
+
+
+
+};
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        Team:
-        <input type="text" name="Team" value={formData.Team} onChange={handleChange} />
-      </label>
-      <label>
-        Games Played:
-        <input type="text" name="GamesPlayed" value={formData.GamesPlayed} onChange={handleChange} />
-        </label>
-        <label>
-        Win:
-        <input type="text" name="Win" value={formData.Win} onChange={handleChange} />
-      </label>
-      <label>
-        Draw:
-        <input type="text" name="Draw" value={formData.Draw} onChange={handleChange} />
-      </label>
-      <label>
-        Loss:
-        <input type="text" name="Loss" value={formData.Loss} onChange={handleChange} />
-      </label>
-      <label>
-      Goals For:
-        <input type="text" name="GoalsForam" value={formData.GoalsFor} onChange={handleChange} />
-      </label>
-      <label>
-      Goals Against:
-        <input type="text" name="GoalsAgainst" value={formData.GoalsAgainst} onChange={handleChange} />
-      </label>
-      <label>
-      Points:
-        <input type="text" name="Points" value={formData.Points} onChange={handleChange} />
-      </label>
-      <label>
-      Year:
-        <input type="text" name="Year" value={formData.Year} onChange={handleChange} />
-      </label>
+    <div style={{marginTop: 10}}>
+      <h3>Add a Team</h3>
+      <form onSubmit={onSubmit} method='Post'>
+        <div className='form-group'>
+          <label>Team Name: </label>
+          <input className='form-control' type='text' name='Team' value={state.Team} onChange={handleChange}/>
+          
+        </div>
+        <div className='form-group'>
+          <label>Games Played</label>
+          <input className='form-control' name="Games Played" type="number" value={state.GamesPlayed} onChange={handleChange}/>
+
+        </div>
+        <div className='form-group'>
+          <label>Win</label>
+          <input className='form-control' name="Win Played" type="number" value={state.Win} onChange={handleChange}/>
+
+        </div>
+        <div className='form-group'>
+          <label>Draw</label>
+          <input className='form-control' name="Draw" type="number" value={state.Draw} onChange={handleChange}/>
+
+        </div>
+        <div className='form-group'>
+          <label>Loss</label>
+          <input className='form-control' name="Loss" type="number" value={state.Loss} onChange={handleChange}/>
+
+        </div>
+        <div className='form-group'>
+          <label>Goals For</label>
+          <input className='form-control' name="Goals For" type="number" value={state.GoalsFor} onChange={handleChange}/>
+
+        </div>
+        <div className='form-group'>
+          <label>Goals Against</label>
+          <input className='form-control' name="Goals Against" type="number" value={state.GoalsAgainst} onChange={handleChange}/>
+
+        </div>
+        <div className='form-group'>
+          <label>Points</label>
+          <input className='form-control' name="Points" type="number" value={state.Points} onChange={handleChange}/>
+
+        </div>
+        <div className='form-group'>
+          <label>Years between (1990 and 2024)</label>
+          <input className='form-control' name="Year" type="range" min = '1990' max='2024' value={state.Year} onChange={handleChange}/>
+
+        </div>
+        <div className='form-group'>
+          <center>
+            <input type='submit' value="Add the new Team" className='btn btn-primary'/>
+            
+          </center>
+
+        </div>
 
 
-      
-      <button type="submit">Add Data</button>
-    </form>
-  );
-};
+      </form>
+
+    </div>
+);
+
 
 export default AddDataForm;

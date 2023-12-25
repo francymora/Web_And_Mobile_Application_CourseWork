@@ -20,9 +20,10 @@ function TeamsDisplay() {
         })
     },[])
     return (
+      
         <div className="container">
           <div className="mt-3">
-            <table>
+          <table className="table table-stripped" style={{ marginTop: '10px', borderCollapse: 'collapse', width: '100%', border: '1px solid #ddd' }}>
               <thead>
                 <tr>
                   <th>Team Name</th>
@@ -51,15 +52,24 @@ function TeamsDisplay() {
                     <td>{team.Points}</td>
                     <td>{team.Year}</td>
                     
+                    <td>
+                      <Link to={"/updateData/" + team._id}>Edit</Link>
+                    </td>
+                    
+                    
                   </tr>
+                  
                 ))}
               </tbody>
             </table>
           </div>
+                  
         </div>
+        
         
       
       );
+      
 }
 
 export default TeamsDisplay;
