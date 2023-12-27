@@ -77,7 +77,7 @@ app.post('/updateData:id', async (req, res) => {
 
 app.delete('/deleteData/:id', async (req, res) => {
   try {
-    const deletionResult = await FootballModel.deleteOne({ id: req.params.id }).exec();
+    const deletionResult = await FootballModel.findByIdAndDelete(req.params.id).exec();
     console.log("Document deleted: ", deletionResult);
     res.status(200).json({ message: 'Document deleted successfully', deletionResult });
   } catch (error) {
