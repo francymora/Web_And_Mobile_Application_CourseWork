@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import { FootballModel } from './data.js';
 import { DatabaseConnection } from './databaseconection.js';
 import cors from 'cors';
+import {MongoClient, ObjectId} from 'mongodb'
 const app = express();
 const port = 3000;
 app.use(express.json());
@@ -74,22 +75,17 @@ app.post('/updateData:id', async (req, res) => {
   }
 });
 
-app.post('/deleteData/:id', async (req, res) => {
-  const { teamName } = req.params; // Ottieni il nome del team dai parametri dell'URL
-
+app.delete('/deleteData/:id', async (req, res) => {
   try {
-    // Trova e elimina il record utilizzando il nome del team
-    const deletedRecord = await FootballModel.findOneAndDelete({ Team: teamName });
-
-    if (!deletedRecord) {
-      return res.status(404).json({ message: 'Record not found' });
-    }
-
-    res.status(200).json({ message: 'Record deleted successfully', data: deletedRecord });
+    const deletionResult = await FootballModel.deleteOne({ id: req.params.id }).exec();
+    console.log("Document deleted: ", deletionResult);
+    res.status(200).json({ message: 'Document deleted successfully', deletionResult });
   } catch (error) {
-    res.status(500).json({ message: 'Error deleting record', error: error.message });
+    console.error('Error deleting document:', error);
+    res.status(500).json({ message: 'Error deleting document', error: error.message });
   }
 });
+
 app.get('/totals/:year', async (req, res) => {
   const { year } = req.params; // Ottieni l'anno dai parametri dell'URL
 
@@ -177,6 +173,17 @@ app.get('/teamsByAverageGoalsFor/:year', async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: 'Error fetching teams', error: error.message });
   }
+});
+
+app.get('/foundteam/:id', async (req, res) => {
+  try{
+  const team = await FootballModel.findById(req.params.id).exec();
+  res.json(team)
+  }catch (err) {
+    console.error('Errore durante la ricerca delle squadre:', err);
+    res.status(500).send('Team not found');
+  }
+
 });
 
 

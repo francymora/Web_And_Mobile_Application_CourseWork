@@ -22,7 +22,7 @@ const ShowTeams = (props) => {
                             <Link to={"http://localhost:3000/updateData/" + team._id}>Edit</Link>
                         </td>
                         <td>
-                            <Link to={"http://localhost:3000/deleteData/" + team._id}>Delete</Link>
+                            <Link to={"deleteData/" + team._id}>Delete</Link>
                         </td>
                     </tr>
                 )
