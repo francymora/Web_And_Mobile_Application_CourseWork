@@ -55,6 +55,9 @@ function TeamsDisplay() {
                     <td>
                       <Link to={"/updateData/" + team._id}>Edit</Link>
                     </td>
+                    <td>
+                      <Link to={"/deleteData/" + team._id}>Delete</Link>
+                    </td>
                     
                     
                   </tr>

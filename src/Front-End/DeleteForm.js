@@ -1,71 +1,99 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-import { useParams} from "react-router-dom";
+import { useParams,useNavigate} from "react-router-dom";
 
 
 function DeleteTeams () {
     const [teamData, setTeamData] = useState(null);
     const [showConfirmation, setShowConfirmation] = useState(false);
-    const teamId = useParams();
-    const url = "http://localhost:3000//foundteam/"+teamId
-    const deleteUrl = 'http://localhost:3000/deleteData/"+teamId'
+    const [deleted, setDeleted] = useState(false);
+    const [deleteButtonVisible, setDeleteButtonVisible] = useState(true);
+    const [showDeletedMessage, setShowDeletedMessage] = useState(false);
+    const {id} = useParams();
+    let navigate = useNavigate();
+    
+    
     useEffect(() => {
-        axios.get(url)
-          .then(response => {
-            setTeamData(response.data);
+        axios
+          .get(`http://localhost:3000/foundteam/${id}`)
+          .then(res => {
+            console.log("retreive", res.data);
+            setTeamData(res.data);
           })
           .catch(error => {
-            console.error('Error fetching team details:', error);
+            console.error("Error fetching team data:", error);
           });
-      }, [teamId]);
+      }, []);
       const handleDeleteConfirmation = () => {
         setShowConfirmation(true);
       };
       const handleDelete = () => {
-        axios.delete(deleteUrl)
-          .then(response => {
-            console.log('Team deleted successfully');
-            // Puoi fare qualcosa qui dopo aver eliminato il team, ad esempio navigare altrove o aggiornare l'interfaccia utente
-          })
+        const confirmation = window.confirm("Team deleted!");
+        if (confirmation) {
+            axios.delete(`http://localhost:3000/deleteData/${id}`).then(() => {
+          console.log("Team deleted successfully");
+          setDeleted(true);
+          setShowDeletedMessage(true);
+          navigate("/");
+          setShowConfirmation(false);
+          setDeleteButtonVisible(false);
+          navigate("/")
+
+          // Nasconde il messaggio dopo 5 secondi (5000 millisecondi)
+          
+        })
+      
+        
           .catch(error => {
             console.error('Error deleting team:', error);
           });
+        }
     
-        setShowConfirmation(false); // Chiudi la conferma di eliminazione
+        setShowConfirmation(false);
+        setDeleteButtonVisible(false);
+        
+        
       };
+      const handleCancelDelete = () => {
+        setShowConfirmation(false);
+        navigate("/");
+        };
       return (
         <div>
           {teamData ? (
             <div>
-              <h3>{teamData.Team}</h3>
-              <h3>{teamData["Games Played"]}</h3>
-              <h3>{teamData.Win}</h3>
-              <h3>{teamData.Draw}</h3>
-              <h3>{teamData.Loss}</h3>
-              <h3>{teamData["Goals For"]}</h3>
-              <h3>{teamData["Goals Against"]}</h3>
-              <h3>{teamData.Points}</h3>
-              <h3>{teamData.Year}</h3>
+              <h3>Team: {teamData.Team}</h3>
+              <h3>Games Played: {teamData["Games Played"]}</h3>
+              <h3>Win: {teamData.Win}</h3>
+              <h3>Draw: {teamData.Draw}</h3>
+              <h3>Loss: {teamData.Loss}</h3>
+              <h3>Goals For: {teamData["Goals For"]}</h3>
+              <h3>Goals Against: {teamData["Goals Against"]}</h3>
+              <h3>Points: {teamData.Points}</h3>
+              <h3>Year: {teamData.Year}</h3>
 
               
               
-              <button onClick={handleDeleteConfirmation}>Delete</button>
+              {deleteButtonVisible && !showConfirmation && (
+            <button onClick={handleDeleteConfirmation}>Delete</button>
+          )}
               
               {showConfirmation && (
-                <div>
-                  <p>Are you sure you want to delete this team?</p>
-                  <button onClick={handleDelete}>Yes</button>
-                  <button onClick={() => setShowConfirmation(false)}>No</button>
-                </div>
-              )}
-              {deleted && (
-                 <p>Team deleted successfully!</p>
-                )}
+            <div>
+              <p>Are you sure you want to delete this team?</p>
+              <button onClick={handleDelete}>Yes</button>
+              <button onClick={handleCancelDelete}>No</button>
             </div>
-          ) : (
-            
-            null
+          )}
+          {deleted && (
+            <p>Team deleted successfully!</p>
           )}
         </div>
-      );
+      ) : (
+        null
+      )}
+    </div>
+  );
+
 }
+export default DeleteTeams;

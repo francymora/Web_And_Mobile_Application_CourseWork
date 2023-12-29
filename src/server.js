@@ -53,25 +53,16 @@ app.post('/addData', async (req, res) => {
 
 
 // POST method per l'aggiornamento di un singolo record per un dato Team
-app.post('/updateData:id', async (req, res) => {
-  const { Team, FieldToUpdate, NewValue } = req.body;
+app.post('/updateData/:id', async (req, res) => {
+  const { Team, GamesPlayed, Win, Draw, Loss, GoalsFor, GoalsAgainst, Points, Year } = req.body;
 
   try {
-    // Trova il record nel database utilizzando il nome del team
-    const existingRecord = await FootballModel.findOne({ Team });
-
-    if (!existingRecord) {
-      return res.status(404).json({ message: 'Record not found' });
-    }
-
-    // Aggiorna il campo specificato con il nuovo valore
-    existingRecord[FieldToUpdate] = NewValue;
-
-    // Salva le modifiche nel database
-    const updatedRecord = await existingRecord.save();
-    res.status(200).json({ message: 'Record updated successfully', data: updatedRecord });
+    const updateResult = await FootballModel.findOneAndUpdate({_id:req.params.id},{Team:Team,"Games Played":GamesPlayed,Win:Win,Loss:Loss,"Goals For": GoalsFor,"Goal Against":GoalsAgainst, Points:Points,Year:Year}).exec();
+    console.log("Document Update: ", updateResult);
+    res.status(200).json({ message: 'Document Update successfully', updateResult });
   } catch (error) {
-    res.status(500).json({ message: 'Error updating record', error: error.message });
+    console.error('Error updationg document:', error);
+    res.status(500).json({ message: 'Error uploading document', error: error.message });
   }
 });
 
