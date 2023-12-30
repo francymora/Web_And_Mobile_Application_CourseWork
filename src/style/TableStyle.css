@@ -1,0 +1,32 @@
+/* Resetta alcuni stili predefiniti */
+table {
+    border-spacing: 0;
+    border-collapse: collapse;
+    height: 100%;
+    width: 100%;
+  }
+  
+  /* Fai in modo che la tabella si estenda per tutta la lunghezza della pagina */
+
+  
+  /* Stile per l'intestazione della tabella */
+  th {
+    position: sticky;
+    top: 0;
+    background-color: #f2f2f2;
+    color: black;
+  }
+  
+  /* Stile per le celle della tabella */
+  td, th {
+    padding: 8px;
+    text-align: center; /* Cambia questo in 'left' o 'right' per allineare il testo a sinistra o a destra */
+    vertical-align: middle; /* Allinea verticalmente il contenuto al centro */
+    border-bottom: 1px solid #ddd; 
+  }
+  
+  /* Aggiungi lo zebra-striping alle righe della tabella */
+  tr:nth-child(even) { 
+      background-color: #f9f9f9; 
+  }
+  

@@ -1,0 +1,34 @@
+.navbar {
+    background: linear-gradient(0deg, #00fa11 20%, #002afa 150%);
+    color: black;
+    font-size: 16px;
+    display: flex;
+    align-items: center; /* Centra verticalmente gli elementi della navbar */
+    justify-content: space-between; /* Distribuisci gli elementi in modo uniforme */
+    padding: 10px 50px; /* Esempio di padding top e bottom 10px, padding right e left 30px */
+  }
+  
+  
+  .nav-link {
+    color: black;
+    margin: 0 10px;
+  }
+  
+  .nav-link:hover {
+    color: #808080;
+  }
+  
+  /* Per posizionare la navbar all'inizio della pagina o del contenitore */
+  body {
+    margin: 0;
+    padding: 0;
+    
+  }
+  
+  /* Per rimuovere il margine predefinito del body che potrebbe influire sul posizionamento della navbar */
+  .navbar {
+    margin: 0;
+  }
+  .online-team-list {
+    order: 1; /* Imposta un ordine maggiore per spostare l'elemento alla fine */
+  }  

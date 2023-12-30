@@ -57,7 +57,7 @@ app.post('/updateData/:id', async (req, res) => {
   const { Team, GamesPlayed, Win, Draw, Loss, GoalsFor, GoalsAgainst, Points, Year } = req.body;
 
   try {
-    const updateResult = await FootballModel.findOneAndUpdate({_id:req.params.id},{Team:Team,"Games Played":GamesPlayed,Win:Win,Loss:Loss,"Goals For": GoalsFor,"Goal Against":GoalsAgainst, Points:Points,Year:Year}).exec();
+    const updateResult = await FootballModel.findOneAndUpdate({_id:req.params.id},{Team:Team,"Games Played":GamesPlayed,Win:Win,Draw:Draw,Loss:Loss,"Goals For": GoalsFor,"Goal Against":GoalsAgainst, Points:Points,Year:Year}).exec();
     console.log("Document Update: ", updateResult);
     res.status(200).json({ message: 'Document Update successfully', updateResult });
   } catch (error) {
@@ -77,94 +77,66 @@ app.delete('/deleteData/:id', async (req, res) => {
   }
 });
 
-app.get('/totals/:year', async (req, res) => {
-  const { year } = req.params; // Ottieni l'anno dai parametri dell'URL
-
-  try {
-    // Trova tutti i record corrispondenti all'anno specificato
-    const records = await FootballModel.find({ Year: parseInt(year) });
-
-    if (!records || records.length === 0) {
-      return res.status(404).json({ message: 'No records found for the given year' });
+app.get('/totalStats/:year/:teamName', async (req, res) => {
+  try{
+    const team = await FootballModel.find({Year: parseInt(req.params.year),Team:req.params.teamName}).exec();
+    res.json(team)
+    }catch (err) {
+      console.error('Errore durante la ricerca delle squadre:', err);
+      res.status(500).send('Team not found');
     }
+  
+  });
 
-    // Calcola il totale dei giochi giocati, dei pareggi e delle vittorie per l'anno specificato
-    let totalGamesPlayed = 0;
-    let totalDraw = 0;
-    let totalWin = 0;
-
-    records.forEach((record) => {
-      totalGamesPlayed += record.GamesPlayed;
-      totalDraw += record.Draw;
-      totalWin += record.Win;
-    });
-
-    res.status(200).json({
-      year: parseInt(year),
-      totalGamesPlayed,
-      totalDraw,
-      totalWin
-    });
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching totals', error: error.message });
-  }
-});
-app.post('/teamsWonGreaterThan', async (req, res) => {
-  const { winValue } = req.body;
-
-  try {
-    const intValue = parseInt(winValue);
-
-    // Esegui la query per trovare le prime 10 squadre in cui il numero di partite "vinte" è maggiore del valore specificato
-    const teams = await FootballModel.find({ Win: { $gt: intValue } }).limit(10);
-
-    if (!teams || teams.length === 0) {
-      return res.status(404).json({ message: 'No teams found with wins greater than the specified value' });
+  app.get('/teamNames', async (req, res) => {
+    try {
+      const teamNames = await FootballModel.distinct('Team').exec();
+      res.json(teamNames);
+    } catch (err) {
+      console.error('Errore durante la ricerca dei nomi delle squadre:', err);
+      res.status(500).send('Errore nel recupero dei nomi delle squadre');
     }
+  });
 
-    res.status(200).json({ teams });
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching teams', error: error.message });
-  }
+  
+  
+
+
+  
+
+app.get('/teamsWonGreaterThan/:win', async (req, res) => {
+  try{
+    const team = await FootballModel.find({Win:{$gte:parseInt(req.params.win)}}).limit(10).exec();
+
+    res.json(team)
+    }catch (err) {
+      console.error('Errore durante la ricerca delle squadre:', err);
+      res.status(500).send('Team not found');
+    }
+  
+
+  
 });
 
-app.get('/teamsByAverageGoalsFor/:year', async (req, res) => {
-  const { year } = req.params;
+
+
+app.get('/avgGoals/:year/:averageGoals', async (req, res) => {
+  const year = parseInt(req.params.year);
+  const averageGoals = parseFloat(req.params.averageGoals);
 
   try {
-    const intValue = parseInt(year);
-
-    // Esegui la query per trovare tutte le squadre per un dato anno e calcolare la media dei "Goals For"
     const teams = await FootballModel.aggregate([
-      {
-        $match: { Year: intValue }
-      },
-      {
-        $group: {
-          _id: '$Team',
-          averageGoalsFor: { $avg: '$GoalsFor' },
-          Team: { $first: '$Team' },
-          GamesPlayed: { $first: '$GamesPlayed' },
-          Win: { $first: '$Win' },
-          Draw: { $first: '$Draw' },
-          Loss: { $first: '$Loss' },
-          GoalsFor: { $first: '$GoalsFor' },
-          GoalsAgainst: { $first: '$GoalsAgainst' },
-          Points: { $first: '$Points' },
-          Year: { $first: '$Year' }
-        }
-      }
+      { $match: { Year: year } },
+      { $addFields: { avgGoals: { $divide: ["$Goals For", "$Games Played"] } } },
+      { $match: { avgGoals: { $gte: averageGoals } } }
     ]);
 
-    if (!teams || teams.length === 0) {
-      return res.status(404).json({ message: 'No teams found for the given year' });
-    }
-
-    res.status(200).json({ teams });
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching teams', error: error.message });
+    res.json(teams);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 });
+
 
 app.get('/foundteam/:id', async (req, res) => {
   try{
@@ -179,53 +151,6 @@ app.get('/foundteam/:id', async (req, res) => {
 
 
 
-/*
-// Supponiamo che tu abbia già importato il modello FootballModel per interagire con il database
-
-// POST method per l'aggiornamento di un singolo record per un dato Team
-app.post('/updateData/:teamName', async (req, res) => {
-  const { teamName } = req.params; // Ottieni il nome del team dai parametri dell'URL
-  const {
-    GamesPlayed,
-    Win,
-    Draw,
-    Loss,
-    GoalsFor,
-    GoalsAgainst,
-    Points,
-    Year
-  } = req.body; // Ottieni i nuovi valori dai dati inviati nel corpo della richiesta
-
-  try {
-    // Cerca il record con il nome del team specificato
-    const existingRecord = await FootballModel.findOne({ Team: teamName });
-
-    if (!existingRecord) {
-      return res.status(404).json({ message: 'Record not found' });
-    }
-
-    // Aggiorna i campi con i nuovi valori
-    existingRecord.GamesPlayed = GamesPlayed;
-    existingRecord.Win = Win;
-    existingRecord.Draw = Draw;
-    existingRecord.Loss = Loss;
-    existingRecord.GoalsFor = GoalsFor;
-    existingRecord.GoalsAgainst = GoalsAgainst;
-    existingRecord.Points = Points;
-    existingRecord.Year = Year;
-
-    // Salva le modifiche nel database
-    const updatedRecord = await existingRecord.save();
-    res.status(200).json({ message: 'Record updated successfully', data: updatedRecord });
-  } catch (error) {
-    res.status(500).json({ message: 'Error updating record', error: error.message });
-  }
-});
-
-
-
-
-*/
 
 
 

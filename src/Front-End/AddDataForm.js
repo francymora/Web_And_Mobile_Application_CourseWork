@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import '../style/AddDataForm.css'
-
+import { useNavigate } from 'react-router-dom';
 
 
 function AddDataForm() {
+  let navigate = useNavigate();
   let url = "http://localhost:3000/";
   const [state, setState] = useState({
     Team: '',
@@ -39,14 +40,20 @@ function AddDataForm() {
       Points: state.Points,
       Year: state.Year
     }
-
-    axios.post(url + "addData", teamdata)
+    const confirmation = window.confirm("Team updated!");
+    if(confirmation){
+      axios.post(url + "addData", teamdata)
       .then(res => console.log(res.data));
+      navigate("/")
+    }
+
+    
+    
   };
 
   return (
-    <div style={{ marginTop: 10 }}>
-      <h3>Add a Team</h3>
+    <div class="wrapper">
+      <h3 className= 'Title-Add'>Add a Team</h3>
       <form onSubmit={onSubmit} method='Post'>
         <div className='form-group'>
           <label>Team Name: </label>
@@ -57,12 +64,12 @@ function AddDataForm() {
           <input className='form-control' type='text' name='Games Played' value={state.GamesPlayed} onChange={handleChange}/>
         </div>
         <div className='form-group'>
-          <label>Win</label>
+          <label>Win: </label>
           <input className='form-control' type="text" name="Win"  value={state.Win} onChange={handleChange}/>
 
         </div>
         <div className='form-group'>
-          <label>Draw</label>
+          <label>Draw: </label>
           <input className='form-control'  type="text" name="Draw" value={state.Draw} onChange={handleChange}/>
 
         </div>
@@ -72,25 +79,25 @@ function AddDataForm() {
 
         </div>
         <div className='form-group'>
-          <label>Goals For</label>
+          <label>Goals For: </label>
           <input className='form-control' type="text" name="Goals For"  value={state.GoalsFor} onChange={handleChange}/>
 
         </div>
         <div className='form-group'>
-          <label>Goals Against</label>
+          <label>Goals Against: </label>
           <input className='form-control' type="text" name="Goals Against"  value={state.GoalsAgainst} onChange={handleChange}/>
 
         </div>
         <div className='form-group'>
-          <label>Points</label>
+          <label>Points: </label>
           <input className='form-control' type="text" name="Points"  value={state.Points} onChange={handleChange}/>
 
         </div>
         <div className='form-group'>
-          <label>Years between (1990 and 2024)</label>
+          <label>Years between (1990 and 2024): </label>
           <input className='form-control' type= 'text' name="Year"  value={state.Year} onChange={handleChange}/>
         </div>
-        <div className='form-group'>
+        <div className='form-button'>
           <center>
             <input type='submit' value="Add the new Team" className='btn btn-primary'/>
           </center>

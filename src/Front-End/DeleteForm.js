@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import { useParams,useNavigate} from "react-router-dom";
+import '../style/DeleteData.css';
 
 
 function DeleteTeams () {
@@ -58,42 +59,39 @@ function DeleteTeams () {
         setShowConfirmation(false);
         navigate("/");
         };
-      return (
-        <div>
-          {teamData ? (
-            <div>
-              <h3>Team: {teamData.Team}</h3>
-              <h3>Games Played: {teamData["Games Played"]}</h3>
-              <h3>Win: {teamData.Win}</h3>
-              <h3>Draw: {teamData.Draw}</h3>
-              <h3>Loss: {teamData.Loss}</h3>
-              <h3>Goals For: {teamData["Goals For"]}</h3>
-              <h3>Goals Against: {teamData["Goals Against"]}</h3>
-              <h3>Points: {teamData.Points}</h3>
-              <h3>Year: {teamData.Year}</h3>
-
-              
-              
-              {deleteButtonVisible && !showConfirmation && (
-            <button onClick={handleDeleteConfirmation}>Delete</button>
-          )}
-              
-              {showConfirmation && (
-            <div>
-              <p>Are you sure you want to delete this team?</p>
-              <button onClick={handleDelete}>Yes</button>
-              <button onClick={handleCancelDelete}>No</button>
-            </div>
-          )}
-          {deleted && (
-            <p>Team deleted successfully!</p>
-          )}
-        </div>
-      ) : (
-        null
-      )}
-    </div>
-  );
-
-}
+        return (
+          <div className="DeleteContainer">
+            {teamData ? (
+              <div className="TeamInfo">
+                <h3>Team: {teamData.Team}</h3>
+                <h3>Games Played: {teamData["Games Played"]}</h3>
+                <h3>Win: {teamData.Win}</h3>
+                <h3>Draw: {teamData.Draw}</h3>
+                <h3>Loss: {teamData.Loss}</h3>
+                <h3>Goals For: {teamData["Goals For"]}</h3>
+                <h3>Goals Against: {teamData["Goals Against"]}</h3>
+                <h3>Points: {teamData.Points}</h3>
+                <h3>Year: {teamData.Year}</h3>
+        
+                {deleteButtonVisible && !showConfirmation && (
+                  <button onClick={handleDeleteConfirmation}>Delete</button>
+                )}
+        
+                {showConfirmation && (
+                  <div className="DeleteConfirmation">
+                    <p>Are you sure you want to delete this team?</p>
+                    <button onClick={handleDelete}>Yes</button>
+                    <button onClick={handleCancelDelete}>No</button>
+                  </div>
+                )}
+                {deleted && (
+                  <p>Team deleted successfully!</p>
+                )}
+              </div>
+            ) : (
+              null
+            )}
+          </div>
+        );
+}        
 export default DeleteTeams;
